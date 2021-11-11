@@ -2,6 +2,6 @@ package br.com.fagner.enums;
 
 public interface TransferSchedulingTypeStrategy {
 	
-	public double calculateRate(int days, double valueTransfer);
+	public double calculateRate(long days, double valueTransfer);
 
 }
