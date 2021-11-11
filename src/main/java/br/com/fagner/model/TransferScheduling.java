@@ -9,9 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import br.com.fagner.enums.TransferSchedulingType;
-import lombok.Data;
 
-@Data
 @Entity(name = "transfer-scheduling")
 public class TransferScheduling implements Serializable {
 
@@ -32,5 +30,61 @@ public class TransferScheduling implements Serializable {
 	private LocalDate dateScheduling;
 	
 	private TransferSchedulingType transferSchedulingType;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Account getSourceAccount() {
+		return sourceAccount;
+	}
+
+	public void setSourceAccount(Account sourceAccount) {
+		this.sourceAccount = sourceAccount;
+	}
+
+	public Account getDestinationAccount() {
+		return destinationAccount;
+	}
+
+	public void setDestinationAccount(Account destinationAccount) {
+		this.destinationAccount = destinationAccount;
+	}
+
+	public double getValueTransfer() {
+		return valueTransfer;
+	}
+
+	public void setValueTransfer(double valueTransfer) {
+		this.valueTransfer = valueTransfer;
+	}
+
+	public LocalDate getDateTransfer() {
+		return dateTransfer;
+	}
+
+	public void setDateTransfer(LocalDate dateTransfer) {
+		this.dateTransfer = dateTransfer;
+	}
+
+	public LocalDate getDateScheduling() {
+		return dateScheduling;
+	}
+
+	public void setDateScheduling(LocalDate dateScheduling) {
+		this.dateScheduling = dateScheduling;
+	}
+
+	public TransferSchedulingType getTransferSchedulingType() {
+		return transferSchedulingType;
+	}
+
+	public void setTransferSchedulingType(TransferSchedulingType transferSchedulingType) {
+		this.transferSchedulingType = transferSchedulingType;
+	}
 	
 }

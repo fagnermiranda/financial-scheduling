@@ -7,9 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import lombok.Data;
-
-@Data
 @Entity(name = "account")
 public class Account implements Serializable{
 	
@@ -20,5 +17,21 @@ public class Account implements Serializable{
 	private Long id;
 	
     private Integer code;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Integer getCode() {
+		return code;
+	}
+
+	public void setCode(Integer code) {
+		this.code = code;
+	}
     
 }
