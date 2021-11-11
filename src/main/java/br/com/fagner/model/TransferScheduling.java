@@ -23,6 +23,8 @@ public class TransferScheduling implements Serializable {
 	
 	private Account destinationAccount; 
 	
+	private double rate;
+
 	private double valueTransfer; 
 
 	private LocalDate dateTransfer;
@@ -55,6 +57,14 @@ public class TransferScheduling implements Serializable {
 		this.destinationAccount = destinationAccount;
 	}
 
+	public double getRate() {
+		return rate;
+	}
+
+	public void setRate(double rate) {
+		this.rate = rate;
+	}
+	
 	public double getValueTransfer() {
 		return valueTransfer;
 	}
@@ -86,5 +96,5 @@ public class TransferScheduling implements Serializable {
 	public void setTransferSchedulingType(TransferSchedulingType transferSchedulingType) {
 		this.transferSchedulingType = transferSchedulingType;
 	}
-	
+
 }
