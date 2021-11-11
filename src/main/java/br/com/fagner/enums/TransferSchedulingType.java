@@ -1,6 +1,6 @@
 package br.com.fagner.enums;
 
-public enum TransferSchedulingType {
+public enum TransferSchedulingType implements TransferSchedulingTypeStrategy{
 	A {
 		@Override
 		public double calculateRate(int days, double valueTransfer) {
@@ -17,22 +17,19 @@ public enum TransferSchedulingType {
 		@Override
 		public double calculateRate(int days, double valueTransfer) {
 			if (days > 10 && days <= 20) {
-				return (valueTransfer * 8) / 100;
+				return (valueTransfer * 0.08);
 
 			} else if (days > 20 && days <= 30) {
-				return (valueTransfer * 6) / 100;
+				return (valueTransfer * 0.06);
 
 			} else if (days > 30 && days <= 40) {
-				return (valueTransfer * 4) / 100;
+				return (valueTransfer * 0.04);
 
 			} else if (days > 40 && (valueTransfer > 100.00)) {
-				return (valueTransfer * 2) / 100;
+				return (valueTransfer * 0.02);
 			}
 
 			return 0;
 		}
-	};
-	
-	public abstract double calculateRate(int days, double valueTransfer);
-	
+	};	
 }
