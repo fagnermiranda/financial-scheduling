@@ -1,46 +1,23 @@
-package br.com.fagner.model;
+package br.com.fagner.dto;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-import br.com.fagner.enums.TransferSchedulingType;
-
-@Entity(name = "transfer_scheduling")
-public class TransferScheduling implements Serializable {
-
+public class TransferSchedulingDTO  implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-    @Column(name = "id_transfer_scheduling")
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
-    @Column(name = "source_account")
 	private int sourceAccount;
 	
-    @Column(name = "destination_account")
 	private int destinationAccount; 
 	
-    @Column(name = "rate")
-	private double rate;
-
-    @Column(name = "value_transfer")
 	private double valueTransfer; 
 
-    @Column(name = "date_transfer")
 	private LocalDate dateTransfer;
 	
-    @Column(name = "date_scheduling")
 	private LocalDate dateScheduling;
-	
-	private TransferSchedulingType transferSchedulingType;
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -65,14 +42,6 @@ public class TransferScheduling implements Serializable {
 		this.destinationAccount = destinationAccount;
 	}
 
-	public double getRate() {
-		return rate;
-	}
-
-	public void setRate(double rate) {
-		this.rate = rate;
-	}
-
 	public double getValueTransfer() {
 		return valueTransfer;
 	}
@@ -95,14 +64,6 @@ public class TransferScheduling implements Serializable {
 
 	public void setDateScheduling(LocalDate dateScheduling) {
 		this.dateScheduling = dateScheduling;
-	}
-
-	public TransferSchedulingType getTransferSchedulingType() {
-		return transferSchedulingType;
-	}
-
-	public void setTransferSchedulingType(TransferSchedulingType transferSchedulingType) {
-		this.transferSchedulingType = transferSchedulingType;
 	}
 
 }
