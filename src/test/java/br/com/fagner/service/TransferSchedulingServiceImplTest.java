@@ -9,10 +9,12 @@ import org.mockito.InjectMocks;
 
 import br.com.fagner.UnitTest;
 import br.com.fagner.enums.TransferSchedulingType;
+import br.com.fagner.exception.BusinessException;
 import br.com.fagner.model.Account;
 import br.com.fagner.model.TransferScheduling;
-import br.com.fagner.service.impl.TransferSchedulingServiceImpl;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 
 class TransferSchedulingServiceImplTest extends UnitTest {
@@ -22,7 +24,7 @@ class TransferSchedulingServiceImplTest extends UnitTest {
 	
 	@Test
 	@DisplayName("Calculete Rate Scheduling Type A With Sucess")
-	void calculateRateSchedulingTypeA_withSuccess() {
+	void calculateRateSchedulingTypeA_withSuccess() throws BusinessException {
 		TransferScheduling transferScheduling = createTransferScheduling(TransferSchedulingType.A, LocalDate.now(), 500);
 		transferScheduling.setRate(transferSchedulingService.calculateRateScheduling(transferScheduling));
 
@@ -32,7 +34,7 @@ class TransferSchedulingServiceImplTest extends UnitTest {
 
 	@Test
 	@DisplayName("Calculete Rate Scheduling Type B With Sucess")
-	void calculateRateSchedulingTypeB_withSuccess() {
+	void calculateRateSchedulingTypeB_withSuccess() throws BusinessException {
 		LocalDate today = LocalDate.now();
 		LocalDate dateScheduling =  today.plusDays(9);
 		TransferScheduling transferScheduling = createTransferScheduling(TransferSchedulingType.B, dateScheduling, 1000);
@@ -45,7 +47,7 @@ class TransferSchedulingServiceImplTest extends UnitTest {
 
 	@Test
 	@DisplayName("Calculete Rate Scheduling Type C With Sucess")
-	void calculateRateSchedulingTypeC_withSuccess() {
+	void calculateRateSchedulingTypeC_withSuccess() throws BusinessException {
 		TransferScheduling transferSchedulingGreater10Until20  = createTransferScheduling(TransferSchedulingType.C, LocalDate.now().plusDays(15), 1000);
 		transferSchedulingGreater10Until20.setRate(transferSchedulingService.calculateRateScheduling(transferSchedulingGreater10Until20));
 
@@ -70,6 +72,17 @@ class TransferSchedulingServiceImplTest extends UnitTest {
         double expectedRateGreater40 = (transferSchedulingGreater40.getValueTransfer() * 0.02);
         assertThat(transferSchedulingGreater40.getRate()).isEqualTo(expectedRateGreater40);
         assertThat(transferSchedulingGreater40.getValueTransfer()).isGreaterThan(100000);
+	}
+	
+	@Test
+	@DisplayName("Calculete Rate Scheduling Type C With Erro")
+	void calculateRateSchedulingTypeC_withErro() throws BusinessException {
+		TransferScheduling transferSchedulingGreater40  = createTransferScheduling(TransferSchedulingType.C, LocalDate.now().plusDays(45), 100);		
+		String message = this.messageSourceUtil.getMessage("business.notRate");
+		BusinessException exception = catchThrowableOfType(() ->transferSchedulingService.calculateRateScheduling(transferSchedulingGreater40), BusinessException.class);
+		
+        assertThat(exception.getMessage()).isNotBlank();
+        assertThat(exception.getMessage()).isEqualTo(message);
 	}
 
 	private TransferScheduling createTransferScheduling(TransferSchedulingType transferSchedulingType,
