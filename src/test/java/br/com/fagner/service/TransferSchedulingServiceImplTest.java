@@ -2,19 +2,25 @@ package br.com.fagner.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.Period;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 import br.com.fagner.UnitTest;
 import br.com.fagner.constants.Percentage;
 import br.com.fagner.enums.TransferSchedulingType;
 import br.com.fagner.exception.BusinessException;
 import br.com.fagner.model.TransferScheduling;
+import br.com.fagner.repository.TransferSchedulingRepository;
 
 
 class TransferSchedulingServiceImplTest extends UnitTest {
@@ -33,6 +39,33 @@ class TransferSchedulingServiceImplTest extends UnitTest {
 	
 	@InjectMocks
 	private TransferSchedulingServiceImpl transferSchedulingService;
+
+	@Mock
+	private TransferSchedulingRepository transferSchedulingRepository;
+	
+	@Test
+	@DisplayName("Create Transfer Scheduling With Sucess")
+	void createTransferScheduling_withSuccess() throws BusinessException {
+		TransferScheduling transferScheduling = createTransferScheduling(LocalDate.now(), VALUE_TRANSFER);
+		transferScheduling.setId(1L);
+
+		when(transferSchedulingRepository.save(ArgumentMatchers.any(TransferScheduling.class))).thenReturn(transferScheduling);
+		TransferScheduling created = transferSchedulingService.createTransferScheduling(transferScheduling);
+
+		verify(transferSchedulingRepository, times(1)).save(transferScheduling);
+        assertThat(created.getId()).isEqualTo(transferScheduling.getId());
+	}
+	
+	@Test
+	@DisplayName("Should Throw Business Exception When Doesnt Exist Rate To Before Day")
+	void shouldThrow_businessException_when_doesnt_exist_rate_to_before_day() throws BusinessException {
+		TransferScheduling transferScheduling  = createTransferScheduling(LocalDate.now().plusDays(-1), VALUE_TRANSFER);		
+		String message = this.messageSourceUtil.getMessage("business.notRate");
+		BusinessException exception = catchThrowableOfType(() ->transferSchedulingService.createTransferScheduling(transferScheduling), BusinessException.class);
+		
+        assertThat(exception.getMessage()).isNotBlank();
+        assertThat(exception.getMessage()).isEqualTo(message);
+	}
 	
 	@Test
 	@DisplayName("Calculete Rate Scheduling Type A With Sucess")
@@ -87,8 +120,8 @@ class TransferSchedulingServiceImplTest extends UnitTest {
 	}
 	
 	@Test
-	@DisplayName("Calculete Rate Scheduling Type C With Erro")
-	void calculateRateSchedulingTypeC_withErro() throws BusinessException {
+	@DisplayName("Should Throw Business Exception When Doesnt Exist Rate To Type C")
+	void shouldThrow_businessException_when_doesnt_exist_rate_to_typeC() throws BusinessException {
 		TransferScheduling transferSchedulingGreater40  = createTransferScheduling(LocalDate.now().plusDays(FORTY_FIVE_DAYS), VALUE_TRANSFER);		
 		String message = this.messageSourceUtil.getMessage("business.notRate");
 		BusinessException exception = catchThrowableOfType(() ->transferSchedulingService.calculateRateScheduling(transferSchedulingGreater40), BusinessException.class);

@@ -28,9 +28,10 @@ public class TransferSchedulingServiceImpl implements TransferSchedulingService 
 		return transferScheduling;
 	}
 	
-	public TransferScheduling beforeCreateTransferScheduling(TransferScheduling transferScheduling) {
+	public TransferScheduling beforeCreateTransferScheduling(TransferScheduling transferScheduling) throws BusinessException {
 		TransferSchedulingType transferSchedulingType = getTransferSchedulingType(transferScheduling);
 		transferScheduling.setTransferSchedulingType(transferSchedulingType);
+		transferScheduling.setRate(calculateRateScheduling(transferScheduling));
 		return transferScheduling;
 	}
 		
@@ -59,10 +60,10 @@ public class TransferSchedulingServiceImpl implements TransferSchedulingService 
 		if (isToday(transferScheduling, today)) {
 			return TransferSchedulingType.A;
 		}
-		if (isTipoB(days)) {
+		if (isTypeB(days)) {
 			return TransferSchedulingType.B;
 		}
-		if (isTipoC(days, valueTransfer)) {
+		if (isTypeC(days, valueTransfer)) {
 			return TransferSchedulingType.C;
 		}
 		return null;
@@ -76,11 +77,11 @@ public class TransferSchedulingServiceImpl implements TransferSchedulingService 
 		return rate == 0;
 	}
 	
-	private boolean isTipoC(long days, double valueTransfer) {
+	private boolean isTypeC(long days, double valueTransfer) {
 		return (days > 10 && days <= 40) || (days > 40 && valueTransfer > 100000);
 	}
 
-	private boolean isTipoB(long days) {
+	private boolean isTypeB(long days) {
 		return days >= 1 && days <= 10;
 	}
 
