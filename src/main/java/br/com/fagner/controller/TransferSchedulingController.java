@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.fagner.dto.TransferSchedulingDTO;
+import br.com.fagner.exception.BusinessException;
 import br.com.fagner.model.TransferScheduling;
 import br.com.fagner.service.TransferSchedulingService;
 
@@ -22,7 +23,7 @@ public class TransferSchedulingController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public TransferSchedulingDTO createTransferScheduling(@RequestBody TransferSchedulingDTO dto) throws Exception {
+	public TransferSchedulingDTO createTransferScheduling(@RequestBody TransferSchedulingDTO dto) throws BusinessException {
 		ModelMapper modelMapper = new ModelMapper();
 		TransferScheduling transferScheduling = modelMapper.map(dto, TransferScheduling.class);
 		return modelMapper.map(transferSchedulingService.createTransferScheduling(transferScheduling),TransferSchedulingDTO.class);
