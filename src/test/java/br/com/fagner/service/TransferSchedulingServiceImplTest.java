@@ -27,11 +27,13 @@ class TransferSchedulingServiceImplTest extends UnitTest {
 	
 	private static final int DESTINATION_ACCOUNT = 02225;
 	private static final int SOURCE_ACCOUNT = 001220;
+	private static final int ACCOUNT_ZERO = 0;
 	private static final int RATE_TYPE_A = 3;
 	private static final int RATE_TYPE_B = 12;
 	private static final int VALUE_TRANSFER_TYPE_C = 100001;
 	private static final int VALUE_TRANSFER_TYPE_C_START = 100000;
 	private static final int VALUE_TRANSFER = 1000;
+	private static final int VALUE_TRANSFER_ZERO = 0;
 	private static final int FORTY_FIVE_DAYS = 45;
 	private static final int THIRTY_FIVE_DAYS = 35;
 	private static final int TWENTY_FIVE_DAYS = 25;
@@ -54,6 +56,75 @@ class TransferSchedulingServiceImplTest extends UnitTest {
 
 		verify(transferSchedulingRepository, times(1)).save(transferScheduling);
         assertThat(created.getId()).isEqualTo(transferScheduling.getId());
+	}
+		
+	@Test
+	@DisplayName("Should Throw Business When Transfer Scheduling Null")
+	void shouldThrow_businessException_when_transfer_scheduling_null() throws BusinessException {
+		TransferScheduling transferScheduling  = null;		
+		String message = this.messageSourceUtil.getMessage("business.informTransferScheduling");
+		BusinessException exception = catchThrowableOfType(() ->transferSchedulingService.createTransferScheduling(transferScheduling), BusinessException.class);
+		
+        assertThat(exception.getMessage()).isNotBlank();
+        assertThat(exception.getMessage()).isEqualTo(message);
+	}
+	
+	@Test
+	@DisplayName("Should Throw Business When Source Account Zero")
+	void shouldThrow_businessException_when_source_account_zero() throws BusinessException {
+		TransferScheduling transferScheduling  = createTransferScheduling(LocalDate.now(), VALUE_TRANSFER);		
+		transferScheduling.setSourceAccount(ACCOUNT_ZERO);
+		String message = this.messageSourceUtil.getMessage("business.informSourceAccount");
+		BusinessException exception = catchThrowableOfType(() ->transferSchedulingService.createTransferScheduling(transferScheduling), BusinessException.class);
+		
+        assertThat(exception.getMessage()).isNotBlank();
+        assertThat(exception.getMessage()).isEqualTo(message);
+	}
+	
+	@Test
+	@DisplayName("Should Throw Business When Destination Account Zero")
+	void shouldThrow_businessException_when_destination_account_zero() throws BusinessException {
+		TransferScheduling transferScheduling  = createTransferScheduling(LocalDate.now(), VALUE_TRANSFER);		
+		transferScheduling.setDestinationAccount(ACCOUNT_ZERO);
+		String message = this.messageSourceUtil.getMessage("business.informDestinationAccount");
+		BusinessException exception = catchThrowableOfType(() ->transferSchedulingService.createTransferScheduling(transferScheduling), BusinessException.class);
+		
+        assertThat(exception.getMessage()).isNotBlank();
+        assertThat(exception.getMessage()).isEqualTo(message);
+	}
+	
+	@Test
+	@DisplayName("Should Throw Business When Value Transfer Zero")
+	void shouldThrow_businessException_when_value_transfer_zero() throws BusinessException {
+		TransferScheduling transferScheduling  = createTransferScheduling(LocalDate.now(), VALUE_TRANSFER_ZERO);		
+		String message = this.messageSourceUtil.getMessage("business.informValueTransfer");
+		BusinessException exception = catchThrowableOfType(() ->transferSchedulingService.createTransferScheduling(transferScheduling), BusinessException.class);
+		
+        assertThat(exception.getMessage()).isNotBlank();
+        assertThat(exception.getMessage()).isEqualTo(message);
+	}
+	
+	@Test
+	@DisplayName("Should Throw Business When Date Scheduling Null")
+	void shouldThrow_businessException_when_date_scheduling_null() throws BusinessException {
+		TransferScheduling transferScheduling  = createTransferScheduling(null, VALUE_TRANSFER);		
+		String message = this.messageSourceUtil.getMessage("business.informDateScheduling");
+		BusinessException exception = catchThrowableOfType(() ->transferSchedulingService.createTransferScheduling(transferScheduling), BusinessException.class);
+		
+        assertThat(exception.getMessage()).isNotBlank();
+        assertThat(exception.getMessage()).isEqualTo(message);
+	}
+	
+	@Test
+	@DisplayName("Should Throw Business When Date Transfer Null")
+	void shouldThrow_businessException_when_date_transfer_null() throws BusinessException {
+		TransferScheduling transferScheduling  = createTransferScheduling(LocalDate.now(), VALUE_TRANSFER);
+		transferScheduling.setDateTransfer(null);
+		String message = this.messageSourceUtil.getMessage("business.informDateTransfer");
+		BusinessException exception = catchThrowableOfType(() ->transferSchedulingService.createTransferScheduling(transferScheduling), BusinessException.class);
+		
+        assertThat(exception.getMessage()).isNotBlank();
+        assertThat(exception.getMessage()).isEqualTo(message);
 	}
 	
 	@Test

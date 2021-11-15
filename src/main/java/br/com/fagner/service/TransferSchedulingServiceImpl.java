@@ -2,6 +2,7 @@ package br.com.fagner.service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,12 +15,12 @@ import br.com.fagner.util.MessageSourceUtil;
 
 @Service
 public class TransferSchedulingServiceImpl implements TransferSchedulingService {
-	
-    @Autowired
-    private MessageSourceUtil messageSourceUtil;
-    
-    @Autowired
-    private TransferSchedulingRepository transferSchedulingRepository;
+
+	@Autowired
+	private MessageSourceUtil messageSourceUtil;
+
+	@Autowired
+	private TransferSchedulingRepository transferSchedulingRepository;
 
 	@Override
 	public TransferScheduling createTransferScheduling(TransferScheduling transferScheduling) throws BusinessException {
@@ -27,14 +28,36 @@ public class TransferSchedulingServiceImpl implements TransferSchedulingService 
 		transferSchedulingRepository.save(transferScheduling);
 		return transferScheduling;
 	}
-	
+
 	public TransferScheduling beforeCreateTransferScheduling(TransferScheduling transferScheduling) throws BusinessException {
+		validate(transferScheduling);
 		TransferSchedulingType transferSchedulingType = getTransferSchedulingType(transferScheduling);
 		transferScheduling.setTransferSchedulingType(transferSchedulingType);
 		transferScheduling.setRate(calculateRateScheduling(transferScheduling));
 		return transferScheduling;
 	}
-		
+
+	public void validate(TransferScheduling transferScheduling) throws BusinessException {
+		if (Objects.isNull(transferScheduling)) {
+			throw new BusinessException(this.messageSourceUtil.getMessage("business.informTransferScheduling"));
+		}
+		if (isZero(transferScheduling.getSourceAccount())) {
+			throw new BusinessException(this.messageSourceUtil.getMessage("business.informSourceAccount"));
+		}
+		if (isZero(transferScheduling.getDestinationAccount())) {
+			throw new BusinessException(this.messageSourceUtil.getMessage("business.informDestinationAccount"));
+		}
+		if (isZero(transferScheduling.getValueTransfer())) {
+			throw new BusinessException(this.messageSourceUtil.getMessage("business.informValueTransfer"));
+		}
+		if (Objects.isNull(transferScheduling.getDateScheduling())) {
+			throw new BusinessException(this.messageSourceUtil.getMessage("business.informDateScheduling"));
+		}
+		if (Objects.isNull(transferScheduling.getDateTransfer())) {
+			throw new BusinessException(this.messageSourceUtil.getMessage("business.informDateTransfer"));
+		}
+	}
+
 	@Override
 	public double calculateRateScheduling(TransferScheduling transferScheduling) throws BusinessException {
 		double rate = 0;
@@ -70,13 +93,16 @@ public class TransferSchedulingServiceImpl implements TransferSchedulingService 
 	}
 
 	private long getDays(TransferScheduling transferScheduling) {
-		return ChronoUnit.DAYS.between(transferScheduling.getDateTransfer(), transferScheduling.getDateScheduling());
+		if(hasDateTransfer(transferScheduling) && hasDateScheduling(transferScheduling)){
+			return ChronoUnit.DAYS.between(transferScheduling.getDateTransfer(), transferScheduling.getDateScheduling());
+		}
+		return 0;
 	}
-		
+
 	private boolean isNotRate(double rate) {
 		return rate == 0;
 	}
-	
+
 	private boolean isTypeC(long days, double valueTransfer) {
 		return (days > 10 && days <= 40) || (days > 40 && valueTransfer > 100000);
 	}
@@ -86,7 +112,23 @@ public class TransferSchedulingServiceImpl implements TransferSchedulingService 
 	}
 
 	private boolean isToday(TransferScheduling transferScheduling, LocalDate today) {
-		return transferScheduling.getDateScheduling().isEqual(today);
+		return hasDateScheduling(transferScheduling) && transferScheduling.getDateScheduling().isEqual(today);
+	}
+
+	private boolean hasDateScheduling(TransferScheduling transferScheduling) {
+		return Objects.nonNull(transferScheduling.getDateScheduling());
+	}
+
+	private boolean hasDateTransfer(TransferScheduling transferScheduling) {
+		return Objects.nonNull(transferScheduling.getDateTransfer());
+	}
+	
+	public boolean isZero(double value) {
+		return value == 0.0;
+	}
+
+	public boolean isZero(int value) {
+		return value == 0;
 	}
 
 }
