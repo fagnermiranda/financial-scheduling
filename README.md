@@ -5,7 +5,7 @@
 Os seguintes frameworks foram usadas na construção do projeto:
 
 - Spring Boot facilita a criação de aplicativos baseados em Spring. 
-- Spring Boot Starter Validation para costumizar as mensagens de validação.
+- Spring Boot Starter Validation para customizar as mensagens de validação.
 - Spring Data JPA para implementar repositórios baseados em JPA.
 - H2 Data Base para criar um banco de dados em memória. 
 - Junit para criar os testes unitários. 
